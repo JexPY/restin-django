@@ -4,3 +4,4 @@ __pycache
 .env
 .env.db
 staticfiles/
+PipFile.lock
