@@ -6,6 +6,9 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./app/:/usr/src/app/
+    links:
+      - db:db
+      - redis:redis
     ports:
       - 8000:8000
     environment:
@@ -20,12 +23,13 @@ services:
       - DATABASE=postgres
     depends_on:
       - db
+
   db:
     image: postgres:11.2-alpine
     ports:
       - "6543:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=core_django
       - POSTGRES_PASSWORD=core_django
@@ -37,10 +41,21 @@ services:
       - db
     ports:
       - "5555:80"
+    volumes:
+      - pga4volume:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
-    restart: unless-stopped
+
+  redis:
+      restart: always
+      image: redis:latest
+      volumes:
+        - redisdata:/data
+      ports:
+        - "6379:6379"
 
 volumes:
-  postgres_data:
+  pgdata:
+  pga4volume:
+  redisdata:
